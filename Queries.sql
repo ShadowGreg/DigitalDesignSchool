@@ -1,0 +1,64 @@
+-- Задание 1
+
+-- create a table
+CREATE TABLE DEPARTMENT (
+  Id NUMDER PRIMARY KEY,
+  NAME  VARCHAR2(100)
+);
+-- insert some values
+INSERT INTO DEPARTMENT VALUES (1, 'Department 1');
+INSERT INTO DEPARTMENT VALUES (2, 'Department 2');
+INSERT INTO DEPARTMENT VALUES (3, 'Department 3');
+INSERT INTO DEPARTMENT VALUES (4, 'Department 4');
+-- fetch some values
+-- SELECT * FROM DEPARTMENT;
+-- create a table
+CREATE TABLE EMPLOYEE (
+  Id NUMDER PRIMARY KEY,
+  DEPARTMENT_Id NUMBER,
+  CHIEF_ID NUMBER,
+  NAME  VARCHAR2(100),
+  SALARY NUMBER,
+  CONSTRAINT CHIEF_ID 
+    FOREIGN KEY (CHIEF_ID) REFERENCES DEPARTMENT (Id),
+ FOREIGN KEY (DEPARTMENT_Id) REFERENCES DEPARTMENT (Id)
+);
+INSERT INTO EMPLOYEE VALUES (1, 1, 1, 'Владимир', 1200);
+INSERT INTO EMPLOYEE VALUES (2, 1, 1, 'Андрей', 210);
+INSERT INTO EMPLOYEE VALUES (3, 1, 2, 'Иля', 10);
+INSERT INTO EMPLOYEE VALUES (4, 1, 2, 'Роман', 15);
+INSERT INTO EMPLOYEE VALUES (5, 2, 2, 'Виктор', 1200);
+INSERT INTO EMPLOYEE VALUES (6, 2, 1, 'Валерий', 1210);
+INSERT INTO EMPLOYEE VALUES (7, 2, 6, 'Татьяна', 110);
+INSERT INTO EMPLOYEE VALUES (8, 2, 6, 'Ульяна', 115);
+INSERT INTO EMPLOYEE VALUES (9, 3, 6, 'Раиса', 115);
+INSERT INTO EMPLOYEE VALUES (10, 3, 1, 'Денис', 115);
+-- 1.	Сотрудника с максимальной заработной платой.
+SELECT NAME
+FROM EMPLOYEE
+WHERE (NAME, SALARY) 
+IN 
+ (SELECT NAME, MAX(SALARY) FROM EMPLOYEE);
+ 
+-- 2.	Отдел, с самой высокой заработной платой между сотрудниками. 
+SELECT DEPARTMENT.NAME
+FROM DEPARTMENT
+JOIN EMPLOYEE 
+ON DEPARTMENT.Id == EMPLOYEE.DEPARTMENT_Id
+WHERE EMPLOYEE.SALARY  
+IN 
+ (SELECT MAX(EMPLOYEE.SALARY) FROM EMPLOYEE);
+
+-- 3.	Отдел, с максимальной суммарной зарплатой сотрудников.
+WITH dep_salary AS 
+	(SELECT DEPARTMENT_Id, sum(SALARY) AS SALARY
+    FROM EMPLOYEE 
+	GROUP BY DEPARTMENT_Id)
+SELECT DEPARTMENT_Id
+FROM dep_salary
+WHERE dep_salary.salary = (SELECT max(salary) FROM dep_salary);
+
+-- 4.	Сотрудника, чье имя начинается на «Р» и заканчивается на «н».
+SELECT NAME
+FROM EMPLOYEE
+WHERE NAME LIKE 'Р%н';
