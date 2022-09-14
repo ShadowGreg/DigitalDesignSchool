@@ -8,23 +8,30 @@
 // d'artifice		50
 // говорит		48
 // значительно		30
-string text = "Буря мглою, бурю кроет, буря по морю идёт, бурю веет маленький критин! То как зверь она завоекет: -УУУ! То заплачет как дитя!";
-char[] separator = { ' ', ',', '.', ':', '\t', '<', '>', '\n', ')', '(', '!', '?', ';', '"', ']', '[', '/', '-' };//separators
-string[] splitArray = text.Split(separator).Select(word => word.ToLower()).ToArray();
-List<WordsCount> wordsList = new List<WordsCount>();
-Print(wordsList);
 
-void ReadFile(string path)
-{
+using System.Text;
+using TestTasks;
 
-}
-void Print(List<WordsCount> printWordsList)
+internal class Program
 {
-    printWordsList.ForEach(p => Console.WriteLine($"{p.word} -> count: {p.count}"));
-}
-class WordsCount
-{
-    public string? word { get; set; }
-    public int count { get; set; }
-
+    private static void Main(string[] args)
+    {
+        const string FILENAME = @"C:\repository\TestTasks\Text.txt";
+        var filePath = File.ReadAllText(FILENAME, Encoding.UTF8);
+        if (filePath != null) //проверка на пустой файл
+        {
+            var textDictionary = new Lib();
+            var wordDictionary = textDictionary.ConvertToDictionary(filePath);
+            using var uniqueWords = new StreamWriter(@"C:\repository\TestTasks\WordsInText.txt");
+            {
+                foreach (var i in
+                         wordDictionary.OrderByDescending(x => x.Value))
+                    uniqueWords.WriteLine($"{i.Key} - {i.Value}"); //Вывод словаря в текстовый файл
+            }
+        }
+        else
+        {
+            Console.WriteLine("Пустой документ");
+        }
+    }
 }
